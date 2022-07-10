@@ -15,7 +15,7 @@ interface CodigoPostalDAO {
     @Query("SELECT count(*) FROM codigo_postal")
     fun getSize() : Int
 
-    @Query("SELECT * FROM codigo_postal")
+    @Query("SELECT * FROM codigo_postal LIMIT 100")
     fun getAll(): List<CodigoPostalEntity>
 
     @Query("SELECT * FROM codigo_postal WHERE nome_localidade LIKE '%' + :name + '%'")

@@ -1,10 +1,11 @@
 package com.vinithius.wtest.extension
 
-import com.vinithius.wtest.datasource.models.CodigoPostalResponse
+import com.vinithius.wtest.datasource.models.CodigoPostalEntity
 
-fun List<String>.getResponseByString(): CodigoPostalResponse? {
+fun Array<String>.getEntityByArray(): CodigoPostalEntity? {
     return try {
-        CodigoPostalResponse(
+        CodigoPostalEntity(
+            id = null,
             codDistrito = this[0],
             codConcelho = this[1],
             codLocalidade = this[2],

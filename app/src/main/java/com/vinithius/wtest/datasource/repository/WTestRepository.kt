@@ -1,11 +1,13 @@
 package com.vinithius.wtest.datasource.repository
 
-import android.util.Log
+import android.os.Environment
+import com.opencsv.CSVReader
 import com.vinithius.wtest.datasource.dao.CodigoPostalDAO
-import com.vinithius.wtest.datasource.models.CodigoPostalResponse
+import com.vinithius.wtest.datasource.models.CodigoPostalData
+import com.vinithius.wtest.datasource.models.LoadingData
 import com.vinithius.wtest.datasource.models.Mapper
-import com.vinithius.wtest.extension.getResponseByString
-import retrofit2.HttpException
+import com.vinithius.wtest.extension.getEntityByArray
+import java.io.*
 
 class WTestRepository(
     private val remoteDataSource: WTestRemoteDataResource,
@@ -14,34 +16,76 @@ class WTestRepository(
 
     suspend fun getCodigoPostalList(
         loading: (
-            (isProgress: Boolean, status: String, count: Int?, size: Int?) -> Unit)
-    ): List<CodigoPostalResponse>? {
-        return try {
-            var count = codigoPostalDAO.getSize()
-            if (count == 0) {
-                loading.invoke(true, STATUS_NETWORK, 0, null)
-                val value = remoteDataSource.getCsv()
-                val lines = value.string().split("\n")
-                lines.drop(1).forEach { codigoPostal ->
-                    loading.invoke(true, STATUS_PROGRESS, count++, lines.size)
-                    val response = codigoPostal.split(",").getResponseByString()
-                    response?.let {
-                        val entity = Mapper().mapToEntity(it)
-                        codigoPostalDAO.insertCodigoPostal(entity)
-                    }
-                }
+            (loadingData: LoadingData) -> Unit)
+    ): List<CodigoPostalData> {
+        val size = codigoPostalDAO.getSize()
+        return if (size > 0) {
+            codigoPostalDAO.getAll().map { Mapper().mapFromEntity(it) }
+        } else {
+            loading.invoke(
+                LoadingData(
+                    isProgress = true,
+                    statusText = STATUS_NETWORK
+                )
+            )
+            val csvFile = remoteDataSource.getCsv().byteStream()
+            writeToFileCsv(csvFile)?.let {
+                insertDatabase(it, loading)
             }
-            loading.invoke(false, STATUS_PROGRESS, null, null)
-            return codigoPostalDAO.getAll().map { Mapper().mapFromEntity(it) }
-        } catch (e: HttpException) {
-            Log.e("CSV ", e.toString())
+            loading.invoke(
+                LoadingData(
+                    isProgress = false
+                )
+            )
+            codigoPostalDAO.getAll().map { Mapper().mapFromEntity(it) }
+        }
+    }
+
+    private fun writeToFileCsv(inputStream: InputStream): String? {
+        return try {
+            val path: File =
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+            val writer = FileOutputStream(File(path, FILE_NAME))
+            writer.write(inputStream.readBytes())
+            writer.close()
+            "$path/$FILE_NAME"
+        } catch (e: Exception) {
+            e.printStackTrace()
             null
         }
     }
 
+    private fun insertDatabase(
+        path: String, loading: ((loadingData: LoadingData) -> Unit)
+    ) {
+        return try {
+            val reader = CSVReader(FileReader(path))
+            val lines = reader.readAll()
+            var count = 0
+            val size = lines.size
+            lines.forEach { line ->
+                ++count
+                line.getEntityByArray()?.let {
+                    codigoPostalDAO.insertCodigoPostal(it)
+                }
+                loading.invoke(
+                    LoadingData(
+                        isProgress = true,
+                        statusText = STATUS_DATABASE,
+                        count = count,
+                        size = size
+                    )
+                )
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+
     companion object {
-        const val STATUS_NETWORK = "Baixando dados..."
-        const val STATUS_PROGRESS = "Inserindo dados: "
+        const val FILE_NAME = "codigos_postais.csv"
+        const val STATUS_NETWORK = "Download CSV..."
+        const val STATUS_DATABASE = "Inserting in database"
     }
 
 }

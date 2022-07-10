@@ -4,8 +4,8 @@ import com.vinithius.wtest.utils.EntityMapper
 
 class Mapper : EntityMapper {
 
-    override fun mapFromEntity(entity: CodigoPostalEntity): CodigoPostalResponse {
-        return CodigoPostalResponse(
+    override fun mapFromEntity(entity: CodigoPostalEntity): CodigoPostalData {
+        return CodigoPostalData(
             codDistrito = entity.codDistrito,
             codConcelho = entity.codConcelho,
             codLocalidade = entity.codLocalidade,
@@ -26,7 +26,7 @@ class Mapper : EntityMapper {
         )
     }
 
-    override fun mapToEntity(response: CodigoPostalResponse): CodigoPostalEntity {
+    override fun mapToEntity(response: CodigoPostalData): CodigoPostalEntity {
         return CodigoPostalEntity(
             id = null,
             codDistrito = response.codDistrito,

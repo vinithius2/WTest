@@ -1,12 +1,12 @@
 package com.vinithius.wtest.utils
 
 import com.vinithius.wtest.datasource.models.CodigoPostalEntity
-import com.vinithius.wtest.datasource.models.CodigoPostalResponse
+import com.vinithius.wtest.datasource.models.CodigoPostalData
 
 interface EntityMapper {
 
-    fun mapFromEntity(entity: CodigoPostalEntity) : CodigoPostalResponse
+    fun mapFromEntity(entity: CodigoPostalEntity) : CodigoPostalData
 
-    fun mapToEntity(response: CodigoPostalResponse) : CodigoPostalEntity
+    fun mapToEntity(response: CodigoPostalData) : CodigoPostalEntity
 
 }

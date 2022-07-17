@@ -13,12 +13,12 @@ interface CodigoPostalDAO {
     fun insertCodigoPostal(vararg codigoPostal: CodigoPostalEntity)
 
     @Query("SELECT count(*) FROM codigo_postal")
-    fun getSize() : Int
+    fun getSize(): Int
 
-    @Query("SELECT * FROM codigo_postal LIMIT 100")
-    fun getAll(): List<CodigoPostalEntity>
+    @Query("SELECT * FROM codigo_postal LIMIT :limit OFFSET :offset")
+    fun getAll(limit: Int, offset: Int): List<CodigoPostalEntity>
 
-    @Query("SELECT * FROM codigo_postal WHERE nome_localidade LIKE '%' + :name + '%'")
-    fun getByNameOrCode(name: String): List<CodigoPostalEntity>
+    @Query("SELECT * FROM codigo_postal WHERE desig_postal LIKE '%' || :search || '%' LIMIT :limit OFFSET :offset")
+    fun getByNameOrCode(search: String, limit: Int, offset: Int): List<CodigoPostalEntity>
 
 }

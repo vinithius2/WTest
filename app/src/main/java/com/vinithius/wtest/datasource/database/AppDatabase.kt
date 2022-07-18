@@ -6,8 +6,14 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.vinithius.wtest.datasource.dao.CodigoPostalDAO
 import com.vinithius.wtest.datasource.models.CodigoPostalEntity
+import com.vinithius.wtest.datasource.models.CodigoPostalFTS
 
-@Database(entities = [CodigoPostalEntity::class], version = 1)
+@Database(
+    entities = [
+        CodigoPostalEntity::class,
+        CodigoPostalFTS::class
+    ], version = 1
+)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun codigoPostalDao(): CodigoPostalDAO
@@ -23,7 +29,8 @@ abstract class AppDatabase : RoomDatabase() {
                         context.applicationContext,
                         AppDatabase::class.java,
                         "wtest_db"
-                    ).build()
+                    ).allowMainThreadQueries() //Remover e usar Coroutines
+                        .build()
                 }
                 return instance
             }

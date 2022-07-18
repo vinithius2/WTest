@@ -22,7 +22,8 @@ fun Array<String>.getEntityByArray(): CodigoPostalEntity? {
             cliente = this[13],
             numCodPostal = this[14],
             extCodPostal = this[15],
-            desigPostal = this[16]
+            desigPostal = this[16],
+            desigPostalNoAccents = this[16].replaceAccents()
         )
     } catch (e: IndexOutOfBoundsException) {
         null

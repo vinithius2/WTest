@@ -41,5 +41,7 @@ data class CodigoPostalEntity(
     @ColumnInfo(name = "ext_cod_postal")
     val extCodPostal: String,
     @ColumnInfo(name = "desig_postal")
-    val desigPostal: String
+    val desigPostal: String,
+    @ColumnInfo(name = "desig_postal_no_accents")
+    val desigPostalNoAccents: String
 )

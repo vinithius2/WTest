@@ -4,10 +4,12 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.vinithius.wtest.datasource.dao.CodigoPostalDAO
 import com.vinithius.wtest.datasource.models.CodigoPostalEntity
+import com.vinithius.wtest.extension.makeQuery
+import com.vinithius.wtest.extension.replaceAccents
 
 class PagingSource(
     private val codigoPostalDAO: CodigoPostalDAO,
-    private val search: String? = null
+    private val query: String? = null
 ) :
     PagingSource<Int, CodigoPostalEntity>() {
 
@@ -19,8 +21,12 @@ class PagingSource(
         val page = params.key ?: INITIAL_PAGE_INDEX
 
         return try {
-            val entities = if (search != null) {
-                codigoPostalDAO.getByNameOrCode(search, params.loadSize, page * params.loadSize)
+            val entities = if (query != null) {
+                codigoPostalDAO.getByNameOrCode(
+                    query.replaceAccents().makeQuery(),
+                    params.loadSize,
+                    page * params.loadSize
+                )
             } else {
                 codigoPostalDAO.getAll(params.loadSize, page * params.loadSize)
             }

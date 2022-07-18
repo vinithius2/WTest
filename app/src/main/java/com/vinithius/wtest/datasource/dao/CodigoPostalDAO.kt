@@ -18,7 +18,15 @@ interface CodigoPostalDAO {
     @Query("SELECT * FROM codigo_postal LIMIT :limit OFFSET :offset")
     fun getAll(limit: Int, offset: Int): List<CodigoPostalEntity>
 
-    @Query("SELECT * FROM codigo_postal WHERE desig_postal LIKE '%' || :search || '%' LIMIT :limit OFFSET :offset")
-    fun getByNameOrCode(search: String, limit: Int, offset: Int): List<CodigoPostalEntity>
+    @Query(
+        """
+        SELECT * FROM codigo_postal
+        JOIN codigo_postal_fts ON codigo_postal.id = codigo_postal_fts.rowid
+        WHERE codigo_postal_fts 
+        MATCH :query
+        LIMIT :limit OFFSET :offset
+    """
+    )
+    fun getByNameOrCode(query: String, limit: Int, offset: Int): List<CodigoPostalEntity>
 
 }

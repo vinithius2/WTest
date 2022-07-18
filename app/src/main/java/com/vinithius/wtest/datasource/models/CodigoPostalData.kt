@@ -17,5 +17,6 @@ data class CodigoPostalData(
     val cliente: String,
     val numCodPostal: String,
     val extCodPostal: String,
-    val desigPostal: String
+    val desigPostal: String,
+    val desigPostalNoAccents: String
 )

@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,15 +30,17 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-//        observerCodigoPostal()
-//        observerStatusLoading()
+        observerStatusLoading()
+        observerIsExistCodigoPostal()
+        observerFinishDownloadAndSave()
         setAdapter()
         permissions()
     }
 
-    private fun searchCodigoPostal(search: String? = null) {
+    private fun searchCodigoPostal(query: String? = null) {
+        binding.progress.isVisible = false
         lifecycleScope.launch {
-            viewModel.getCodigoPostal(search)?.observe(this@MainActivity) {
+            viewModel.getCodigoPostal(query)?.observe(this@MainActivity) {
                 lifecycleScope.launch {
                     adapter.submitData(it)
                 }
@@ -48,7 +51,7 @@ class MainActivity : AppCompatActivity() {
     private fun permissions() {
         if (Build.VERSION.SDK_INT >= 23) {
             if (getIfPermission()) {
-                searchCodigoPostal()
+                viewModel.getIsExistCodigoPostal()
             } else {
                 ActivityCompat.requestPermissions(
                     this,
@@ -77,23 +80,29 @@ class MainActivity : AppCompatActivity() {
         return write && read
     }
 
-//    private fun observerCodigoPostal() {
-//        viewModel.codigoPostal.observe(this) {
-//            with(binding) {
-//                recyclerViewCodigoPostal.isVisible = true
-//                progress.isVisible = false
-//                it?.let { listCodigo ->
-//                    setAdapter(listCodigo)
-//                }
-//            }
-//        }
-//    }
+    private fun observerStatusLoading() {
+        viewModel.codigoPostalStatusLoading.observe(this) { loadingData ->
+            binding.progress.setData(loadingData)
+        }
+    }
 
-//    private fun observerStatusLoading() {
-//        viewModel.codigoPostalStatusLoading.observe(this) { loadingData ->
-//            binding.progress.setData(loadingData)
-//        }
-//    }
+    private fun observerIsExistCodigoPostal() {
+        viewModel.isExistCodigoPostal.observe(this) { isExist ->
+            if (isExist) {
+                searchCodigoPostal()
+            } else {
+                viewModel.getDownloadAndSaveCSV()
+            }
+        }
+    }
+
+    private fun observerFinishDownloadAndSave() {
+        viewModel.finishDownloadAndSave.observe(this) { isFinish ->
+            if (isFinish) {
+                searchCodigoPostal()
+            }
+        }
+    }
 
     private fun setAdapter() {
         val linearLayout = LinearLayoutManager(this)

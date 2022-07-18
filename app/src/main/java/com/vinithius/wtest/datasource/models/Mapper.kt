@@ -22,30 +22,8 @@ class Mapper : EntityMapper {
             cliente = entity.cliente,
             numCodPostal = entity.numCodPostal,
             extCodPostal = entity.extCodPostal,
-            desigPostal = entity.desigPostal
-        )
-    }
-
-    override fun mapToEntity(response: CodigoPostalData): CodigoPostalEntity {
-        return CodigoPostalEntity(
-            id = null,
-            codDistrito = response.codDistrito,
-            codConcelho = response.codConcelho,
-            codLocalidade = response.codLocalidade,
-            nomeLocalidade = response.codLocalidade,
-            codArteria = response.codArteria,
-            tipoArteria = response.tipoArteria,
-            prep1 = response.prep1,
-            tituloArteria = response.tituloArteria,
-            prep2 = response.prep2,
-            nomeArteria = response.nomeArteria,
-            localArteria = response.localArteria,
-            troco = response.troco,
-            porta = response.porta,
-            cliente = response.cliente,
-            numCodPostal = response.numCodPostal,
-            extCodPostal = response.extCodPostal,
-            desigPostal = response.desigPostal
+            desigPostal = entity.desigPostal,
+            desigPostalNoAccents = entity.desigPostalNoAccents
         )
     }
 }

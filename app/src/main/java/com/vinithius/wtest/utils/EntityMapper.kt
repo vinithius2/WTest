@@ -7,6 +7,4 @@ interface EntityMapper {
 
     fun mapFromEntity(entity: CodigoPostalEntity) : CodigoPostalData
 
-    fun mapToEntity(response: CodigoPostalData) : CodigoPostalEntity
-
 }

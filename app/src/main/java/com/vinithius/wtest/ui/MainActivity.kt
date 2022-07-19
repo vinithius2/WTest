@@ -41,8 +41,8 @@ class MainActivity : AppCompatActivity() {
         binding.progress.isVisible = false
         lifecycleScope.launch {
             viewModel.getCodigoPostal(query)?.observe(this@MainActivity) {
-                lifecycleScope.launch {
-                    adapter.submitData(it)
+                it?.let {
+                    adapter.submitData(lifecycle, it)
                 }
             }
         }

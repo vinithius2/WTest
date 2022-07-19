@@ -37,16 +37,13 @@ android {
 
 dependencies {
 
-    var roomVersion = "2.4.1"
+    // Room
+    var roomVersion = "2.4.2"
     annotationProcessor("androidx.room:room-compiler:$roomVersion")
     kapt("androidx.room:room-compiler:$roomVersion")
-//    ksp("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
-    implementation("androidx.room:room-rxjava2:$roomVersion")
-    implementation("androidx.room:room-rxjava3:$roomVersion")
-    implementation("androidx.room:room-guava:$roomVersion")
-    implementation("androidx.room:room-paging:2.4.2")
+    implementation("androidx.room:room-paging:$roomVersion")
 
     // Koin for Android
     var koin_version = '3.2.0'

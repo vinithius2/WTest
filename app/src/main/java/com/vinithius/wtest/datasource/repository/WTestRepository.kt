@@ -23,7 +23,7 @@ class WTestRepository(
             }
         ).liveData
 
-    suspend fun getExistCodigoPostal() : Boolean {
+    suspend fun getExistCodigoPostal(): Boolean {
         return codigoPostalDAO.getSize() > 0
     }
 
@@ -32,21 +32,21 @@ class WTestRepository(
             (loadingData: LoadingData) -> Unit)
     ): Boolean {
 
-            loading.invoke(
-                LoadingData(
-                    isProgress = true,
-                    statusText = STATUS_NETWORK
-                )
+        loading.invoke(
+            LoadingData(
+                isProgress = true,
+                statusText = STATUS_NETWORK
             )
-            val csvFile = remoteDataSource.getCsv().byteStream()
-            writeToFileCsv(csvFile)?.let {
-                insertDatabase(it, loading)
-            }
-            loading.invoke(
-                LoadingData(
-                    isProgress = false
-                )
+        )
+        val csvFile = remoteDataSource.getCsv().byteStream()
+        writeToFileCsv(csvFile)?.let {
+            insertDatabase(it, loading)
+        }
+        loading.invoke(
+            LoadingData(
+                isProgress = false
             )
+        )
 
         return true
     }
@@ -65,7 +65,7 @@ class WTestRepository(
         }
     }
 
-    private fun insertDatabase(
+    private suspend fun insertDatabase(
         path: String, loading: ((loadingData: LoadingData) -> Unit)
     ) {
         return try {

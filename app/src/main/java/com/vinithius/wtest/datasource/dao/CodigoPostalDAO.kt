@@ -10,13 +10,13 @@ import com.vinithius.wtest.datasource.models.CodigoPostalEntity
 interface CodigoPostalDAO {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertCodigoPostal(vararg codigoPostal: CodigoPostalEntity)
+    suspend fun insertCodigoPostal(vararg codigoPostal: CodigoPostalEntity)
 
     @Query("SELECT count(*) FROM codigo_postal")
-    fun getSize(): Int
+    suspend fun getSize(): Int
 
     @Query("SELECT * FROM codigo_postal LIMIT :limit OFFSET :offset")
-    fun getAll(limit: Int, offset: Int): List<CodigoPostalEntity>
+    suspend fun getAll(limit: Int, offset: Int): List<CodigoPostalEntity>
 
     @Query(
         """
@@ -27,6 +27,6 @@ interface CodigoPostalDAO {
         LIMIT :limit OFFSET :offset
     """
     )
-    fun getByNameOrCode(query: String, limit: Int, offset: Int): List<CodigoPostalEntity>
+    suspend fun getByNameOrCode(query: String, limit: Int, offset: Int): List<CodigoPostalEntity>
 
 }
